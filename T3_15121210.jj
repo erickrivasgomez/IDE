@@ -1,0 +1,128 @@
+options {
+LOOKAHEAD=1;
+}
+PARSER_BEGIN(Parser)
+public class Parser{
+public static void main(String args[]) throws ParseException {
+	Parser miParser = new Parser(System.in);
+	miParser.inicio() ;
+}
+}
+PARSER_END(Parser)
+SKIP :{
+	"b ¯& "
+	| "\t"
+	| "\n"
+	| "\r"
+    | " "
+}
+SPECIAL_TOKEN[IGNORE_CASE] : {
+	<COMENTARIO: "//" (~["\n","\r"])* ("\n"|"\r"|"\n\r")> {System.out.println("Comentario");}
+    | <BREAK: "break;"> {System.out.println("BREAK");}
+    | <RETURN: "return"> {System.out.println("RETURN");}
+}
+TOKEN [IGNORE_CASE] : {
+    <VERDAD: "true">
+    | <FALSO: "false">
+    | <APOSTRO: "'">
+    | <EQ: "==">  
+	| <DIF: "!="> 
+	| <MAYIG: ">="> 
+	| <MENIG: "<=">
+	| <MAY: ">"> 
+    | <MEN: "<"> 
+    | <INT: "int">
+    | <CAR: "char">
+	| <BOOL: "boolean">
+    | <FLOTANTE: "float">
+    | <FUNCTION: "function">
+    | <ENCABEZADO: "use "(["a"-"z","A"-"Z","_","-"])+".h">
+    }
+
+TOKEN [IGNORE_CASE] : {
+
+     <SUMA: "+">
+    |<RESTA: "-">
+    |<MULT: "*">
+    |<DIVISION: "/">
+    | <IGUALDAD: "=">
+	
+    | <DO: "do">
+    | <FOR: "for">
+    | <IF: ("if")>
+    | <ELSE: "else">  
+    | <PAR1: "(">
+    | <PAR2: ")">
+    | <CON: <PAR1>(((["a"-"z"]|["0"-"9"])(<EQ>|<DIF>|<MAYIG>|<MENIG>|<MAY>|<MEN>)(["a"-"z"]|["0"-"9"]))|("1"|<VERDAD>))<PAR2>>  
+    | <LLA1: "{">
+    | <LLA2: "}">
+    | <WHILE: "while">
+    | <DOSPUNTOS: ":">
+    | <PUNTOCOMA: ";">
+    | <CARACTER: <APOSTRO>(["a"-"z","A"-"Z"]|["0"-"9"])<APOSTRO>>
+    | <FLOT: ("+"|"-")?(["0"-"9"])*"."(["0"-"9"])+("e"("+"|"-")(["0"-"9"])+)?>
+    | <NUM: (["0"-"9"])+>
+    | <CAD: (["a"-"z","A"-"Z","_","-"])+>
+    | <MM : ("++")>
+    | <INC: (<CAD><MM>|<MM><CAD>)>
+     
+}
+
+
+void inicio() : {} {
+	(producciones())<EOF>	
+}
+
+void producciones() : {}{
+    (mientras()|si()|declaracion()|por()|funcion()|header())+|nada()
+	//(mientras()|si()|entero()|siono()|flotant()|por())+|nada()
+}
+
+void header() :{}{
+    <ENCABEZADO>{System.out.println("Encabezado");}
+}
+
+void tipo() : {}{
+    (<INT>{System.out.print("Entero ");}
+    |<CAR>{System.out.print("Caracter ");}
+    |<BOOL>{System.out.print("Booleano ");}
+    |<FLOTANTE>{System.out.print("Flotante ");})
+}
+
+void mientras() :{}{
+{System.out.println("Entrada a ciclo WHILE");}(<DO><LLA1>(producciones())<LLA2>)?<WHILE><CON>(<LLA1>(producciones())<LLA2>)?{System.out.println("Salida de ciclo WHILE");}    
+}
+
+void si() :{}{ 
+    {System.out.println("Entra a IF");}
+    <IF><CON><LLA1>(producciones())<LLA2>{System.out.println("Salida de IF.");}(sino())?
+}
+
+void sino() :{}{
+    {System.out.print("Entrada a ELSE ");}<ELSE>({System.out.println("IF");}si())?{System.out.println("");}(<LLA1>(producciones())<LLA2>{System.out.println("Salida de ELSE.");})?
+}
+
+void por() :{}{
+{System.out.println("Entrada a ciclo FOR.");}<FOR><PAR1>declaracion()porcond()<PUNTOCOMA><INC><PAR2>(<LLA1>(producciones())<LLA2>)
+{System.out.println("Salida de ciclo FOR.");}    
+}
+
+void porcond() :{}{
+    ((<CAD>|<NUM>)(<EQ>|<DIF>|<MAYIG>|<MENIG>|<MAY>|<MEN>)(<CAD>|<NUM>)|<VERDAD>)
+}
+
+void nada() :{}{
+{System.out.println("Sin acciones");}
+}
+
+void declaracion() :{}{
+    tipo()<CAD>(<IGUALDAD>(<CAD>|valor()))*<PUNTOCOMA>{System.out.println("declarado.");}
+}
+
+void valor() :{}{
+    (<NUM>|<FLOT>|<VERDAD>|<FALSO>|<CARACTER>)
+}
+
+void funcion() :{}{
+    <FUNCTION>{System.out.print("Funcion tipo: ");}<CAD><PAR1><PAR2><DOSPUNTOS>tipo(){System.out.println();}<LLA1>producciones()valor()<PUNTOCOMA>{System.out.println("Salida de funcion");}<LLA2>
+}
