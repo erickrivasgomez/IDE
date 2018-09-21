@@ -1,25 +1,34 @@
 
 import de.javasoft.synthetica.plain.SyntheticaPlainLookAndFeel;
+import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
-import java.io.File;
 import java.text.ParseException;
-import java.util.List;
-import javax.swing.Icon;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Vector;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JTree;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.filechooser.FileSystemView;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -32,6 +41,8 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class IDE extends javax.swing.JFrame {
 
+    private JTree fileTree;
+    private FileSystemModel fileSystemModel;
 
     public IDE() {
 
@@ -40,8 +51,47 @@ public class IDE extends javax.swing.JFrame {
         int width = pantalla.width;
         this.setSize(width / 2, height / 2);
         this.setLocationRelativeTo(null);
-        
         initComponents();
+        FileTreeFrame(System.getProperty("user.dir"));
+
+        //initComponents();
+    }
+
+    private void FileTreeFrame(String directory) {
+        fileSystemModel = new FileSystemModel(new File(directory));
+        fileTree = new JTree(fileSystemModel);
+        fileTree.setEditable(true);
+        fileTree.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent event) {
+                File file = (File) fileTree.getLastSelectedPathComponent();
+                jtaFuente.setText(getFileDetails(file));
+            }
+        });
+        JPanel pArbol = new JPanel();
+        pArbol.setLocation(0, 55);
+        pArbol.setSize(148, 385);
+        pArbol.add(new JScrollPane(fileTree));
+        pArbol.setVisible(true);
+        getContentPane().add(pArbol);
+    }
+
+    private String getFileDetails(File file) {
+        if (file == null) {
+            return "";
+        }
+        StringBuffer buffer = new StringBuffer();
+        String sCurrentLine = "";
+        buffer.append("Name: " + file.getName() + "\n");
+        buffer.append("Path: " + file.getPath() + "\n");
+        buffer.append("Size: " + file.length() + "\n");
+        try (BufferedReader br = new BufferedReader(new FileReader(file.getPath()))) {
+            while ((sCurrentLine = br.readLine()) != null) {
+                buffer.append("\n" + sCurrentLine);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return buffer.toString();
     }
 
     /**
@@ -107,7 +157,7 @@ public class IDE extends javax.swing.JFrame {
         );
         panelTreeLayout.setVerticalGroup(
             panelTreeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 384, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -197,4 +247,100 @@ public class IDE extends javax.swing.JFrame {
     private javax.swing.JTextArea jtaFuente;
     private javax.swing.JPanel panelTree;
     // End of variables declaration//GEN-END:variables
+}
+
+class FileSystemModel implements TreeModel {
+
+    private File root;
+
+    private Vector listeners = new Vector();
+
+    public FileSystemModel(File rootDirectory) {
+        root = rootDirectory;
+    }
+
+    public Object getRoot() {
+        return root;
+    }
+
+    public Object getChild(Object parent, int index) {
+        File directory = (File) parent;
+        String[] children = directory.list();
+        for (int i = 0; i < children.length; i++) {
+            System.out.println(children[i]);
+        }
+        return new TreeFile(directory, children[index]);
+    }
+
+    public int getChildCount(Object parent) {
+        File file = (File) parent;
+        if (file.isDirectory()) {
+            String[] fileList = file.list();
+            if (fileList != null) {
+                return file.list().length;
+            }
+        }
+        return 0;
+    }
+
+    public boolean isLeaf(Object node) {
+        File file = (File) node;
+        return file.isFile();
+    }
+
+    public int getIndexOfChild(Object parent, Object child) {
+        File directory = (File) parent;
+        File file = (File) child;
+        String[] children = directory.list();
+        for (int i = 0; i < children.length; i++) {
+            if (file.getName().equals(children[i])) {
+                return i;
+            }
+        }
+        return -1;
+
+    }
+
+    public void valueForPathChanged(TreePath path, Object value) {
+        File oldFile = (File) path.getLastPathComponent();
+        String fileParentPath = oldFile.getParent();
+        String newFileName = (String) value;
+        File targetFile = new File(fileParentPath, newFileName);
+        oldFile.renameTo(targetFile);
+        File parent = new File(fileParentPath);
+        int[] changedChildrenIndices = {getIndexOfChild(parent, targetFile)};
+        Object[] changedChildren = {targetFile};
+        fireTreeNodesChanged(path.getParentPath(), changedChildrenIndices, changedChildren);
+
+    }
+
+    private void fireTreeNodesChanged(TreePath parentPath, int[] indices, Object[] children) {
+        TreeModelEvent event = new TreeModelEvent(this, parentPath, indices, children);
+        Iterator iterator = listeners.iterator();
+        TreeModelListener listener = null;
+        while (iterator.hasNext()) {
+            listener = (TreeModelListener) iterator.next();
+            listener.treeNodesChanged(event);
+        }
+    }
+
+    public void addTreeModelListener(TreeModelListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeTreeModelListener(TreeModelListener listener) {
+        listeners.remove(listener);
+    }
+}
+
+class TreeFile extends File {
+
+    public TreeFile(File parent, String child) {
+        super(parent, child);
+    }
+
+    public String toString() {
+        return getName();
+    }
+
 }
