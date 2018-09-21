@@ -1,11 +1,8 @@
 
 import de.javasoft.synthetica.plain.SyntheticaPlainLookAndFeel;
-import java.awt.BorderLayout;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.text.ParseException;
 import javax.swing.JOptionPane;
@@ -17,16 +14,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
@@ -41,7 +31,6 @@ import javax.swing.tree.TreePath;
  */
 public class IDE extends javax.swing.JFrame {
 
-    private JTree fileTree;
     private FileSystemModel fileSystemModel;
 
     public IDE() {
@@ -52,45 +41,36 @@ public class IDE extends javax.swing.JFrame {
         this.setSize(width / 2, height / 2);
         this.setLocationRelativeTo(null);
         initComponents();
-        FileTreeFrame(System.getProperty("user.dir"));
+        FileTreeFrame(System.getProperty("user.home"));
 
-        //initComponents();
     }
 
     private void FileTreeFrame(String directory) {
         fileSystemModel = new FileSystemModel(new File(directory));
-        fileTree = new JTree(fileSystemModel);
-        fileTree.setEditable(true);
-        fileTree.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent event) {
-                File file = (File) fileTree.getLastSelectedPathComponent();
-                jtaFuente.setText(getFileDetails(file));
-            }
+        pTree.setModel(fileSystemModel);
+        pTree.addTreeSelectionListener((TreeSelectionEvent event) -> {
+            File file = (File) pTree.getLastSelectedPathComponent();
+            jtaFuente.setText(getFileDetails(file));
         });
-        JPanel pArbol = new JPanel();
-        pArbol.setLocation(0, 55);
-        pArbol.setSize(148, 385);
-        pArbol.add(new JScrollPane(fileTree));
-        pArbol.setVisible(true);
-        getContentPane().add(pArbol);
     }
 
     private String getFileDetails(File file) {
         if (file == null) {
             return "";
         }
-        StringBuffer buffer = new StringBuffer();
-        String sCurrentLine = "";
-        buffer.append("Name: " + file.getName() + "\n");
-        buffer.append("Path: " + file.getPath() + "\n");
-        buffer.append("Size: " + file.length() + "\n");
+        StringBuilder buffer = new StringBuilder();
+        String sCurrentLine;
+        buffer.append("Name: ").append(file.getName()).append("\n");
+        buffer.append("Path: ").append(file.getPath()).append("\n");
+        buffer.append("Size: ").append(file.length()).append("\n");
         try (BufferedReader br = new BufferedReader(new FileReader(file.getPath()))) {
             while ((sCurrentLine = br.readLine()) != null) {
-                buffer.append("\n" + sCurrentLine);
+                buffer.append("\n").append(sCurrentLine);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(buffer.toString());
         return buffer.toString();
     }
 
@@ -110,7 +90,9 @@ public class IDE extends javax.swing.JFrame {
         btnCompilar = new javax.swing.JButton();
         jToolBar1 = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
-        panelTree = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        pTree = new javax.swing.JTree();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IDE - Erick Rivas Gómez");
@@ -149,15 +131,21 @@ public class IDE extends javax.swing.JFrame {
         });
         jToolBar1.add(jButton1);
 
-        javax.swing.GroupLayout panelTreeLayout = new javax.swing.GroupLayout(panelTree);
-        panelTree.setLayout(panelTreeLayout);
-        panelTreeLayout.setHorizontalGroup(
-            panelTreeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 148, Short.MAX_VALUE)
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        pTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane3.setViewportView(pTree);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
-        panelTreeLayout.setVerticalGroup(
-            panelTreeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 384, Short.MAX_VALUE)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -166,7 +154,7 @@ public class IDE extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(panelTree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -190,7 +178,7 @@ public class IDE extends javax.swing.JFrame {
                         .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
-                    .addComponent(panelTree, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -240,38 +228,40 @@ public class IDE extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCompilar;
     private javax.swing.JButton jButton1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JEditorPane jepTerminal;
     private javax.swing.JTextArea jtaFuente;
-    private javax.swing.JPanel panelTree;
+    private javax.swing.JTree pTree;
     // End of variables declaration//GEN-END:variables
 }
 
 class FileSystemModel implements TreeModel {
 
-    private File root;
+    private final File root;
 
-    private Vector listeners = new Vector();
+    private final Vector listeners = new Vector();
 
     public FileSystemModel(File rootDirectory) {
         root = rootDirectory;
     }
 
+    @Override
     public Object getRoot() {
         return root;
     }
 
+    @Override
     public Object getChild(Object parent, int index) {
         File directory = (File) parent;
         String[] children = directory.list();
-        for (int i = 0; i < children.length; i++) {
-            System.out.println(children[i]);
-        }
         return new TreeFile(directory, children[index]);
     }
 
+    @Override
     public int getChildCount(Object parent) {
         File file = (File) parent;
         if (file.isDirectory()) {
@@ -283,11 +273,13 @@ class FileSystemModel implements TreeModel {
         return 0;
     }
 
+    @Override
     public boolean isLeaf(Object node) {
         File file = (File) node;
         return file.isFile();
     }
 
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         File directory = (File) parent;
         File file = (File) child;
@@ -301,6 +293,7 @@ class FileSystemModel implements TreeModel {
 
     }
 
+    @Override
     public void valueForPathChanged(TreePath path, Object value) {
         File oldFile = (File) path.getLastPathComponent();
         String fileParentPath = oldFile.getParent();
@@ -317,17 +310,19 @@ class FileSystemModel implements TreeModel {
     private void fireTreeNodesChanged(TreePath parentPath, int[] indices, Object[] children) {
         TreeModelEvent event = new TreeModelEvent(this, parentPath, indices, children);
         Iterator iterator = listeners.iterator();
-        TreeModelListener listener = null;
+        TreeModelListener listener;
         while (iterator.hasNext()) {
             listener = (TreeModelListener) iterator.next();
             listener.treeNodesChanged(event);
         }
     }
 
+    @Override
     public void addTreeModelListener(TreeModelListener listener) {
         listeners.add(listener);
     }
 
+    @Override
     public void removeTreeModelListener(TreeModelListener listener) {
         listeners.remove(listener);
     }
@@ -339,6 +334,7 @@ class TreeFile extends File {
         super(parent, child);
     }
 
+    @Override
     public String toString() {
         return getName();
     }
