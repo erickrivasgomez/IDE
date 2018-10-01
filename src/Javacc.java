@@ -30,8 +30,12 @@ public class Javacc {
         }
         try {
             Runtime rt = Runtime.getRuntime();
-            String[] commands = {"cmd", "/c", "java Parser < entrada.txt"};
+            String[] commands = {"cmd", "/c", "javacc Parser.jj"};
             Process proc = rt.exec(commands);
+            String[] commands1 = {"cmd", "/c", "javac *.java"};
+            proc = rt.exec(commands1);
+            String[] commands2 = {"cmd", "/c", "java Parser < entrada.txt"};
+            proc = rt.exec(commands2);
 
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 
@@ -40,11 +44,11 @@ public class Javacc {
             String s = null;
             //Estas son etiquetas HTML para jEditorPane, modificar el tipo de formato que permite.
             while ((s = stdInput.readLine()) != null) {
-                resultado += ("<p style='color: green; font-family:verdana;font-size:110%;'>" + s + "</p>");
+                resultado += ("<span style='color: green; font-family:verdana;font-size:110%;'>" + s + "<br></span>");
             }
 
             while ((s = stdError.readLine()) != null) {
-                resultado += ("<p style='color: red; font-family:verdana;font-size:100%;'>" + s + "</p>");
+                resultado += ("<span style='color: red; font-family:verdana;font-size:100%;'>" + s + "<br></span>");
             }
 
         } catch (IOException e) {

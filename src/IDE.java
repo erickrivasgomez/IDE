@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.event.TreeModelEvent;
@@ -41,8 +42,7 @@ public class IDE extends javax.swing.JFrame {
         this.setSize(width / 2, height / 2);
         this.setLocationRelativeTo(null);
         initComponents();
-        FileTreeFrame(System.getProperty("user.home"));
-
+        FileTreeFrame(System.getProperty("user.dir"));
     }
 
     private void FileTreeFrame(String directory) {
@@ -60,12 +60,11 @@ public class IDE extends javax.swing.JFrame {
         }
         StringBuilder buffer = new StringBuilder();
         String sCurrentLine;
-        buffer.append("Name: ").append(file.getName()).append("\n");
-        buffer.append("Path: ").append(file.getPath()).append("\n");
-        buffer.append("Size: ").append(file.length()).append("\n");
+        lNombre.setText(file.getName() + " - " + file.length() + " B");
+        lRuta.setText(file.getPath());
         try (BufferedReader br = new BufferedReader(new FileReader(file.getPath()))) {
             while ((sCurrentLine = br.readLine()) != null) {
-                buffer.append("\n").append(sCurrentLine);
+                buffer.append(sCurrentLine).append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,42 +82,29 @@ public class IDE extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jtaFuente = new javax.swing.JTextArea();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jepTerminal = new javax.swing.JEditorPane();
-        btnCompilar = new javax.swing.JButton();
-        jToolBar1 = new javax.swing.JToolBar();
+        tbAcciones = new javax.swing.JToolBar();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         pTree = new javax.swing.JTree();
+        jPanel2 = new javax.swing.JPanel();
+        lNombre = new javax.swing.JLabel();
+        lRuta = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jtaFuente = new javax.swing.JTextArea();
+        btnCompilar = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jepTerminal = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IDE - Erick Rivas Gómez");
-        setResizable(false);
 
-        jtaFuente.setColumns(20);
-        jtaFuente.setFont(new java.awt.Font("DialogInput", 0, 13)); // NOI18N
-        jtaFuente.setRows(5);
-        jtaFuente.setTabSize(4);
-        jScrollPane1.setViewportView(jtaFuente);
+        tbAcciones.setFloatable(false);
+        tbAcciones.setRollover(true);
 
-        jepTerminal.setBackground(new java.awt.Color(0, 0, 0));
-        jepTerminal.setContentType("text/html"); // NOI18N
-        jScrollPane2.setViewportView(jepTerminal);
-
-        btnCompilar.setText("Compilar");
-        btnCompilar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCompilarActionPerformed(evt);
-            }
-        });
-
-        jToolBar1.setFloatable(false);
-        jToolBar1.setRollover(true);
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/new_project.jpg"))); // NOI18N
+        jButton1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        jButton1.setText("Abrir ZIP");
         jButton1.setFocusable(false);
         jButton1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -129,7 +115,19 @@ public class IDE extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        jToolBar1.add(jButton1);
+        tbAcciones.add(jButton1);
+
+        jButton2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
+        jButton2.setText("Otra acción");
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        tbAcciones.add(jButton2);
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         pTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
@@ -140,7 +138,7 @@ public class IDE extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -148,42 +146,72 @@ public class IDE extends javax.swing.JFrame {
             .addComponent(jScrollPane3)
         );
 
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lNombre.setFont(new java.awt.Font("Segoe UI Symbol", 0, 13)); // NOI18N
+        jPanel2.add(lNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 165, 30));
+
+        lRuta.setFont(new java.awt.Font("Segoe UI Semilight", 0, 13)); // NOI18N
+        lRuta.setForeground(new java.awt.Color(102, 102, 102));
+        jPanel2.add(lRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(177, 0, 520, 30));
+
+        jtaFuente.setColumns(20);
+        jtaFuente.setFont(new java.awt.Font("DialogInput", 0, 13)); // NOI18N
+        jtaFuente.setRows(5);
+        jtaFuente.setTabSize(4);
+        jtaFuente.setToolTipText("");
+        jScrollPane1.setViewportView(jtaFuente);
+
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 740, 460));
+
+        btnCompilar.setText("Compilar");
+        btnCompilar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompilarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnCompilar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 520, 192, 35));
+
+        jepTerminal.setEditable(false);
+        jepTerminal.setBackground(new java.awt.Color(0, 0, 0));
+        jepTerminal.setContentType("text/html"); // NOI18N
+        jScrollPane2.setViewportView(jepTerminal);
+
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 570, 740, 160));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(tbAcciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(222, 222, 222))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane2)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE))
-                        .addContainerGap())))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 747, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tbAcciones, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCompilar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 743, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showConfirmDialog(null, "dfghjkl");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
         // TODO add your handling code here:
@@ -195,11 +223,6 @@ public class IDE extends javax.swing.JFrame {
             Logger.getLogger(IDE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnCompilarActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        JOptionPane.showConfirmDialog(null, "dfghjkl");
-    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -228,14 +251,18 @@ public class IDE extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCompilar;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JToolBar jToolBar1;
     private javax.swing.JEditorPane jepTerminal;
     private javax.swing.JTextArea jtaFuente;
+    private javax.swing.JLabel lNombre;
+    private javax.swing.JLabel lRuta;
     private javax.swing.JTree pTree;
+    private javax.swing.JToolBar tbAcciones;
     // End of variables declaration//GEN-END:variables
 }
 
@@ -258,6 +285,7 @@ class FileSystemModel implements TreeModel {
     public Object getChild(Object parent, int index) {
         File directory = (File) parent;
         String[] children = directory.list();
+        
         return new TreeFile(directory, children[index]);
     }
 
