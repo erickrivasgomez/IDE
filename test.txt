@@ -1,0 +1,28 @@
+Encabezado
+Declaracion: entero a =  4
+Declaracion: entero c =  0
+Asignacion: a =  1 + 1
+Asignacion: f =  0 -----La variable no ha sido declarada
+Entra a IF
+0
+0
+(0==0)->true
+Declaracion: entero c =  9
+-----La variable ya fue declarada
+Salida de IF.
+Entra a switch
+Se compara: a=2
+	(2==8)false
+Declaracion: entero b =  0
+Declaracion: boolean e = false
+	(2==4)false
+Declaracion: entero b =  1
+-----La variable ya fue declarada
+Declaracion: boolean e = false
+-----La variable ya fue declarada
+
+	Nombre		Tipo		Valor
+	a		Entero		2
+	c		Entero		0
+	b		Entero		0
+	e		Boolean		false

@@ -25,6 +25,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import modelos.CompiladorAVR;
 import modelos.traductor;
 
 /*
@@ -49,6 +50,8 @@ public class IDE extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         initComponents();
         FileTreeFrame(System.getProperty("user.dir"));
+        lnombreIn.setText("Entrada");
+        lRutaIn.setText("in.txt");
     }
 
     private void FileTreeFrame(String directory) {
@@ -72,10 +75,9 @@ public class IDE extends javax.swing.JFrame {
             while ((sCurrentLine = br.readLine()) != null) {
                 buffer.append(sCurrentLine).append("\n");
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            buffer.append("El archivo no puede abrirse: ").append(e.getMessage());
         }
-        System.out.println(buffer.toString());
         return buffer.toString();
     }
 
@@ -101,12 +103,22 @@ public class IDE extends javax.swing.JFrame {
         jtaFuente = new javax.swing.JTextArea();
         btnCompilar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jepTerminal = new javax.swing.JEditorPane();
+        jepTerminalJavaCC = new javax.swing.JEditorPane();
         jPanel3 = new javax.swing.JPanel();
-        lRuta1 = new javax.swing.JLabel();
-        lNombre1 = new javax.swing.JLabel();
+        lRutaIn = new javax.swing.JLabel();
+        lnombreIn = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jtaIN = new javax.swing.JTextArea();
+        jPanel4 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        taSalida = new javax.swing.JTextArea();
+        jlSalida = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        btnTraducir = new javax.swing.JButton();
+        btnCompilarGCC = new javax.swing.JButton();
+        btnCompilarAVR = new javax.swing.JButton();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jepTerminalGCC = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IDE - Erick Rivas Gómez");
@@ -159,24 +171,16 @@ public class IDE extends javax.swing.JFrame {
 
         lRuta.setFont(new java.awt.Font("Segoe UI Semilight", 0, 13)); // NOI18N
         lRuta.setForeground(new java.awt.Color(102, 102, 102));
-        jPanel2.add(lRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(177, 0, 430, 30));
+        jPanel2.add(lRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(177, 0, 380, 30));
 
         jtaFuente.setColumns(20);
-        jtaFuente.setFont(new java.awt.Font("DialogInput", 0, 13)); // NOI18N
+        jtaFuente.setFont(new java.awt.Font("DialogInput", 0, 11)); // NOI18N
         jtaFuente.setRows(5);
         jtaFuente.setTabSize(4);
         jtaFuente.setToolTipText("");
-        jtaFuente.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jtaFuenteKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jtaFuenteKeyTyped(evt);
-            }
-        });
         jScrollPane1.setViewportView(jtaFuente);
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 610, 430));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 560, 430));
 
         btnCompilar.setText("Compilar");
         btnCompilar.addActionListener(new java.awt.event.ActionListener() {
@@ -184,47 +188,128 @@ public class IDE extends javax.swing.JFrame {
                 btnCompilarActionPerformed(evt);
             }
         });
-        jPanel2.add(btnCompilar, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 480, 192, 35));
+        jPanel2.add(btnCompilar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 480, 192, 35));
 
-        jepTerminal.setEditable(false);
-        jepTerminal.setBackground(new java.awt.Color(0, 0, 0));
-        jepTerminal.setContentType("text/html"); // NOI18N
-        jScrollPane2.setViewportView(jepTerminal);
+        jepTerminalJavaCC.setEditable(false);
+        jepTerminalJavaCC.setBackground(new java.awt.Color(0, 0, 0));
+        jepTerminalJavaCC.setContentType("text/html"); // NOI18N
+        jScrollPane2.setViewportView(jepTerminalJavaCC);
 
-        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 520, 610, 210));
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 520, 560, 210));
 
-        lRuta1.setFont(new java.awt.Font("Segoe UI Semilight", 0, 13)); // NOI18N
-        lRuta1.setForeground(new java.awt.Color(102, 102, 102));
+        lRutaIn.setFont(new java.awt.Font("Segoe UI Semilight", 0, 13)); // NOI18N
+        lRutaIn.setForeground(new java.awt.Color(102, 102, 102));
 
-        lNombre1.setFont(new java.awt.Font("Segoe UI Symbol", 0, 13)); // NOI18N
+        lnombreIn.setFont(new java.awt.Font("Segoe UI Symbol", 0, 13)); // NOI18N
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane4.setViewportView(jTextArea1);
+        jtaIN.setColumns(20);
+        jtaIN.setFont(new java.awt.Font("DialogInput", 0, 11)); // NOI18N
+        jtaIN.setRows(5);
+        jtaIN.setTabSize(4);
+        jScrollPane4.setViewportView(jtaIN);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane4)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(lRuta1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(160, 160, 160))
+                        .addComponent(lnombreIn, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lRutaIn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(322, 322, 322))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lRuta1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lnombreIn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lRutaIn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 31, Short.MAX_VALUE))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        taSalida.setColumns(20);
+        taSalida.setFont(new java.awt.Font("DialogInput", 0, 11)); // NOI18N
+        taSalida.setRows(5);
+        jScrollPane5.setViewportView(taSalida);
+
+        jlSalida.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+            .addComponent(jlSalida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addComponent(jlSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        btnTraducir.setText("Traducir a C");
+        btnTraducir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTraducirActionPerformed(evt);
+            }
+        });
+
+        btnCompilarGCC.setText("Compilar con GCC");
+        btnCompilarGCC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompilarGCCActionPerformed(evt);
+            }
+        });
+
+        btnCompilarAVR.setText("Generar .hex (AVR-GCC)");
+        btnCompilarAVR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompilarAVRActionPerformed(evt);
+            }
+        });
+
+        jepTerminalGCC.setEditable(false);
+        jepTerminalGCC.setBackground(new java.awt.Color(0, 0, 0));
+        jepTerminalGCC.setContentType("text/html"); // NOI18N
+        jScrollPane6.setViewportView(jepTerminalGCC);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnTraducir, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17)
+                .addComponent(btnCompilarGCC, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnCompilarAVR, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(39, 39, 39)))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnTraducir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCompilarGCC, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCompilarAVR, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                    .addGap(0, 41, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -234,10 +319,15 @@ public class IDE extends javax.swing.JFrame {
             .addComponent(tbAcciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -246,13 +336,16 @@ public class IDE extends javax.swing.JFrame {
                 .addComponent(tbAcciones, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 743, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         pack();
@@ -265,30 +358,43 @@ public class IDE extends javax.swing.JFrame {
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
         // TODO add your handling code here:
-        String code = jtaFuente.getText();
+        String codigo = jtaFuente.getText();
+        String in = jtaIN.getText();
         Javacc com = new Javacc();
         try {
-            jepTerminal.setText(com.lexer(code));
+            jepTerminalJavaCC.setText(com.lexer(codigo, in));
         } catch (IOException ex) {
             Logger.getLogger(IDE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnCompilarActionPerformed
 
-    private void jtaFuenteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtaFuenteKeyReleased
+    private void btnTraducirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTraducirActionPerformed
         // TODO add your handling code here:
-       
-        
-    }//GEN-LAST:event_jtaFuenteKeyReleased
-
-    private void jtaFuenteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtaFuenteKeyTyped
-        // TODO add your handling code here:
-        traductor trad = new traductor();
-        try {
-            trad.escribir(jtaFuente.getText());
-        } catch (Exception ex) {
-            Logger.getLogger(IDE.class.getName()).log(Level.SEVERE, null, ex);
+        File file = new File("out.c");
+        StringBuilder buffer = new StringBuilder();
+        String sCurrentLine;
+        jlSalida.setText(file.getName() + " - " + file.length() + " B");
+        try (BufferedReader br = new BufferedReader(new FileReader(file.getPath()))) {
+            while ((sCurrentLine = br.readLine()) != null) {
+                buffer.append(sCurrentLine).append("\n");
+            }
+        } catch (Exception e) {
+            buffer.append("El archivo no puede abrirse: ").append(e.getMessage());
         }
-    }//GEN-LAST:event_jtaFuenteKeyTyped
+        taSalida.setText(buffer.toString());
+    }//GEN-LAST:event_btnTraducirActionPerformed
+
+    private void btnCompilarGCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarGCCActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnCompilarGCCActionPerformed
+
+    private void btnCompilarAVRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarAVRActionPerformed
+        // TODO add your handling code here:
+        CompiladorAVR avr = new CompiladorAVR();
+        jepTerminalGCC.setText(avr.compilar());
+        
+    }//GEN-LAST:event_btnCompilarAVRActionPerformed
 
     /**
      * @param args the command line arguments
@@ -316,23 +422,33 @@ public class IDE extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCompilar;
+    private javax.swing.JButton btnCompilarAVR;
+    private javax.swing.JButton btnCompilarGCC;
+    private javax.swing.JButton btnTraducir;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JEditorPane jepTerminal;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JEditorPane jepTerminalGCC;
+    private javax.swing.JEditorPane jepTerminalJavaCC;
+    private javax.swing.JLabel jlSalida;
     private javax.swing.JTextArea jtaFuente;
+    private javax.swing.JTextArea jtaIN;
     private javax.swing.JLabel lNombre;
-    private javax.swing.JLabel lNombre1;
     private javax.swing.JLabel lRuta;
-    private javax.swing.JLabel lRuta1;
+    private javax.swing.JLabel lRutaIn;
+    private javax.swing.JLabel lnombreIn;
     private javax.swing.JTree pTree;
+    private javax.swing.JTextArea taSalida;
     private javax.swing.JToolBar tbAcciones;
     // End of variables declaration//GEN-END:variables
 }

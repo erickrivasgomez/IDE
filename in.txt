@@ -1,0 +1,25 @@
+def F_CPU=16000000UL
+use avr/io.h
+use stdio.h
+use util/delay.h
+
+main(void){
+	DDRB = 0b00000001;
+	DDRD = 0b00000111;
+	char luces [0b00000001 , 0b00000010 , 0b00000100];
+	int a=1;
+	while(a==1){
+		PORTD = luces [ 0 ];
+		delay( 20);
+		PORTD = luces [ 1 ];
+		delay( 20 );
+		PORTD = luces [ 2 ];
+		delay( 20 );
+
+		if(!(PINB & (1<<PB1))){
+			PORTB = 0b00000001;
+		}else{
+			PORTB = 0b00000000;
+		}
+	}
+}
