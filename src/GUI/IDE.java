@@ -1,8 +1,13 @@
+package GUI;
 
+
+import modelos.Javacc;
+import de.javasoft.synthetica.dark.SyntheticaDarkLookAndFeel;
 import de.javasoft.synthetica.plain.SyntheticaPlainLookAndFeel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.text.ParseException;
 import javax.swing.JOptionPane;
@@ -20,6 +25,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+import modelos.traductor;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -96,6 +102,11 @@ public class IDE extends javax.swing.JFrame {
         btnCompilar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jepTerminal = new javax.swing.JEditorPane();
+        jPanel3 = new javax.swing.JPanel();
+        lRuta1 = new javax.swing.JLabel();
+        lNombre1 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IDE - Erick Rivas Gómez");
@@ -104,21 +115,16 @@ public class IDE extends javax.swing.JFrame {
         tbAcciones.setRollover(true);
 
         jButton1.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        jButton1.setText("Abrir ZIP");
+        jButton1.setText("--");
         jButton1.setFocusable(false);
         jButton1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         jButton1.setIconTextGap(5);
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
         tbAcciones.add(jButton1);
 
         jButton2.setFont(new java.awt.Font("Segoe UI Semibold", 0, 18)); // NOI18N
-        jButton2.setText("Otra acción");
+        jButton2.setText("--");
         jButton2.setFocusable(false);
         jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -153,16 +159,24 @@ public class IDE extends javax.swing.JFrame {
 
         lRuta.setFont(new java.awt.Font("Segoe UI Semilight", 0, 13)); // NOI18N
         lRuta.setForeground(new java.awt.Color(102, 102, 102));
-        jPanel2.add(lRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(177, 0, 520, 30));
+        jPanel2.add(lRuta, new org.netbeans.lib.awtextra.AbsoluteConstraints(177, 0, 430, 30));
 
         jtaFuente.setColumns(20);
         jtaFuente.setFont(new java.awt.Font("DialogInput", 0, 13)); // NOI18N
         jtaFuente.setRows(5);
         jtaFuente.setTabSize(4);
         jtaFuente.setToolTipText("");
+        jtaFuente.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jtaFuenteKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtaFuenteKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(jtaFuente);
 
-        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 740, 460));
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 610, 430));
 
         btnCompilar.setText("Compilar");
         btnCompilar.addActionListener(new java.awt.event.ActionListener() {
@@ -170,14 +184,48 @@ public class IDE extends javax.swing.JFrame {
                 btnCompilarActionPerformed(evt);
             }
         });
-        jPanel2.add(btnCompilar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 520, 192, 35));
+        jPanel2.add(btnCompilar, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 480, 192, 35));
 
         jepTerminal.setEditable(false);
         jepTerminal.setBackground(new java.awt.Color(0, 0, 0));
         jepTerminal.setContentType("text/html"); // NOI18N
         jScrollPane2.setViewportView(jepTerminal);
 
-        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 570, 740, 160));
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 520, 610, 210));
+
+        lRuta1.setFont(new java.awt.Font("Segoe UI Semilight", 0, 13)); // NOI18N
+        lRuta1.setForeground(new java.awt.Color(102, 102, 102));
+
+        lNombre1.setFont(new java.awt.Font("Segoe UI Symbol", 0, 13)); // NOI18N
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane4.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jScrollPane4)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(lNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12)
+                        .addComponent(lRuta1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(160, 160, 160))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lNombre1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lRuta1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 31, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -187,7 +235,10 @@ public class IDE extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 747, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 612, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,19 +249,18 @@ public class IDE extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 743, Short.MAX_VALUE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 743, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        JOptionPane.showConfirmDialog(null, "dfghjkl");
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
@@ -223,6 +273,22 @@ public class IDE extends javax.swing.JFrame {
             Logger.getLogger(IDE.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnCompilarActionPerformed
+
+    private void jtaFuenteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtaFuenteKeyReleased
+        // TODO add your handling code here:
+       
+        
+    }//GEN-LAST:event_jtaFuenteKeyReleased
+
+    private void jtaFuenteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtaFuenteKeyTyped
+        // TODO add your handling code here:
+        traductor trad = new traductor();
+        try {
+            trad.escribir(jtaFuente.getText());
+        } catch (Exception ex) {
+            Logger.getLogger(IDE.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jtaFuenteKeyTyped
 
     /**
      * @param args the command line arguments
@@ -254,13 +320,18 @@ public class IDE extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JEditorPane jepTerminal;
     private javax.swing.JTextArea jtaFuente;
     private javax.swing.JLabel lNombre;
+    private javax.swing.JLabel lNombre1;
     private javax.swing.JLabel lRuta;
+    private javax.swing.JLabel lRuta1;
     private javax.swing.JTree pTree;
     private javax.swing.JToolBar tbAcciones;
     // End of variables declaration//GEN-END:variables

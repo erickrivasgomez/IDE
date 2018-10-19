@@ -35,4 +35,12 @@ public class TablaSimbolos {
         }
         return null;
     }
+
+    public void setValor(String nombre, Object valor){
+        for (int i = 0; i < tabla.size(); i++) {
+            if (tabla.get(i).getNombre().equals(nombre)) {
+                tabla.get(i).setValor(valor);
+            }
+        }
+    }
 }

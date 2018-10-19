@@ -1,3 +1,5 @@
+package modelos;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,11 +32,13 @@ public class Javacc {
         }
         try {
             Runtime rt = Runtime.getRuntime();
+            String[] location = {"cmd", "/c", "cd /src/compilador"};
+            Process proc = rt.exec(location);
             String[] commands = {"cmd", "/c", "javacc Parser.jj"};
-            Process proc = rt.exec(commands);
+            proc = rt.exec(commands);
             String[] commands1 = {"cmd", "/c", "javac *.java"};
             proc = rt.exec(commands1);
-            String[] commands2 = {"cmd", "/c", "java Parser < entrada.txt"};
+            String[] commands2 = {"cmd", "/c", "java Parser < entrada.txt "};
             proc = rt.exec(commands2);
 
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -44,7 +48,7 @@ public class Javacc {
             String s = null;
             //Estas son etiquetas HTML para jEditorPane, modificar el tipo de formato que permite.
             while ((s = stdInput.readLine()) != null) {
-                resultado += ("<span style='color: green; font-family:verdana;font-size:110%;'>" + s + "<br></span>");
+                resultado += ("<span style='color: white; font-family:verdana;font-size:110%;'>" + s + "<br></span>");
             }
 
             while ((s = stdError.readLine()) != null) {

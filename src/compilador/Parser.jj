@@ -103,27 +103,27 @@ void si() :{}{
 }
 
 void cond() : {Token actual; Object variable=null; Object compara=null; String signo="";}{
-    <PAR1>((actual = <CAD> {variable = actual.image;variable = (int)tabla.getValor(actual.image+"");}|actual = <NUM>{variable = actual.image;})(
-                actual = <EQ> {signo = actual.image;}
+    <PAR1>((actual = <CAD> {variable = actual.image;variable = tabla.getValor(actual.image);System.out.println(variable);}|actual = <NUM>{variable = actual.image;System.out.println(variable);})(
+                actual = <EQ> {signo = actual.image+"";}
                 |actual = <DIF> {signo = actual.image;}
                 |actual = <MAYIG>{signo = actual.image;}
                 |actual = <MENIG>{signo = actual.image;}
                 |actual = <MAY>{signo = actual.image;}
                 |actual = <MEN>{signo = actual.image;}
                 )
-            (actual = <CAD>{compara = actual.image;compara = (int)tabla.getValor(actual.image+"");}|actual = <NUM>{compara = actual.image;})
-            {evaluarIF((int)variable, (int)compara, signo);}
+            (actual = <CAD>{compara = actual.image;compara = tabla.getValor(actual.image+"");System.out.println(compara);}|actual = <NUM>{compara = actual.image;System.out.println(compara);})
+            {evaluarIF(variable, compara, signo);}
             |("1"{System.out.println("true");}
             |<VERDAD>{System.out.println("true");}))
     <PAR2>
 }
 
-void evaluarIF(int variable, int compara, String signo) : {} {
+void evaluarIF(Object variable, Object compara, String signo) : {} {
     {
         switch (signo){
             case "<":
                 System.out.print("("+variable+"<"+compara+")");
-                if (variable<compara){
+                if (Integer.parseInt(variable+"")<Integer.parseInt(compara+"")){
                     System.out.println("->"+true);
                 }
                 else {
@@ -132,7 +132,7 @@ void evaluarIF(int variable, int compara, String signo) : {} {
                 break;
             case ">":
                 System.out.print("("+variable+">"+compara+")");
-                if (variable>compara){
+                if (Integer.parseInt(variable+"")>Integer.parseInt(compara+"")){
                     System.out.println("->"+true);
                 }
                 else {
@@ -141,7 +141,7 @@ void evaluarIF(int variable, int compara, String signo) : {} {
                 break;
             case "==":
                 System.out.print("("+variable+"=="+compara+")");
-                if (variable==compara){
+                if (Integer.parseInt(variable+"")==Integer.parseInt(compara+"")){
                     System.out.println("->"+true);
                 }
                 else {
@@ -172,19 +172,43 @@ void nada() :{}{
 void declaracion() :{Token actual;String nombre;String tipo;Object valor="";}{
     {System.out.print("Declaracion: entero ");}
     <INT> actual = <CAD>{System.out.print(actual.image);nombre = actual.image;}(<IGUALDAD>(actual = <CAD>{System.out.print(", "+actual.image);}|{System.out.print(" = ");valor = operaciones();}))*{System.out.println("");}<PUNTOCOMA>
-    {tabla.insertarVariable(nombre, "Entero", valor);}
+    {
+        if(tabla.buscarVariable(nombre)){
+            tabla.insertarVariable(nombre, "Entero", valor);
+        }else{
+            System.out.println("-----La variable ya fue declarada");
+        }
+    }
 
     |{System.out.print("Declaracion: char ");}
     <CAR> actual = <CAD>{System.out.print(actual.image);nombre = actual.image;}(<IGUALDAD>(actual = <CAD>{System.out.print(", "+actual.image);}|actual = <CARACTER>{System.out.print(" = "+actual.image);valor = actual.image;}))*{System.out.println("");}<PUNTOCOMA>
-    {tabla.insertarVariable(nombre, "Char", valor);}
+    {
+        if(tabla.buscarVariable(nombre)){
+            tabla.insertarVariable(nombre, "Char", valor);
+        }else{
+            System.out.println("-----La variable ya fue declarada");
+        }
+    }
     
     |{System.out.print("Declaracion: boolean ");}
     <BOOL> actual = <CAD>{System.out.print(actual.image);nombre = actual.image;}(<IGUALDAD>(actual = <CAD>{System.out.print(", "+actual.image);}|actual = <VERDAD>{System.out.print(" = "+actual.image);valor = actual.image;}|actual = <FALSO>{System.out.print(" = "+actual.image);valor = actual.image;}))*{System.out.println("");}<PUNTOCOMA>
-    {tabla.insertarVariable(nombre, "Boolean", valor);}
+    {
+        if(tabla.buscarVariable(nombre)){
+            tabla.insertarVariable(nombre, "Boolean", valor);
+        }else{
+            System.out.println("-----La variable ya fue declarada");
+        }
+    }
     
     |{System.out.print("Declaracion: flotante ");}
     <FLOTANTE> actual = <CAD>{System.out.print(actual.image);nombre = actual.image;}(<IGUALDAD>(actual = <CAD>{System.out.print(", "+actual.image);}|actual = <FLOT>{System.out.print(" = "+actual.image);valor = actual.image;}))*{System.out.println("");}<PUNTOCOMA>
-    {tabla.insertarVariable(nombre, "Float", valor);}
+    {
+        if(tabla.buscarVariable(nombre)){
+            tabla.insertarVariable(nombre, "Float", valor);
+        }else{
+            System.out.println("-----La variable ya fue declarada");
+        }
+    }
 }
 
 int valor() :{Token actual; int num;}{
@@ -231,6 +255,20 @@ void evaluarSwitch(Object variable, Object compara):{} {
     }
 }
 
-void asignacion() : {Token actual;String nombre;Object valor;}{
-    actual = <CAD> {nombre = actual.image;}<IGUALDAD>(<CAD>|{valor = operaciones();})<PUNTOCOMA>
+void asignacion() : {Token actual;String nombre;Object valor=null;}{
+    actual = <CAD>
+    {
+        System.out.print("Asignacion: "+actual.image+" = ");
+        nombre = actual.image;
+    }
+    <IGUALDAD>(<CAD>|{valor = operaciones();})
+    <PUNTOCOMA>
+    {
+        if(!tabla.buscarVariable(nombre)){
+            tabla.setValor(nombre, valor);
+        }else{
+            System.out.print(" -----La variable no ha sido declarada");
+        }        
+        System.out.println("");
+    }
 }
