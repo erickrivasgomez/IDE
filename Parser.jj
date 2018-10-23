@@ -69,7 +69,9 @@ TOKEN [IGNORE_CASE] : {
     | <LLA2: "}">
     | <COR1: "[">
     | <COR2: "]">
+    | <COMILLAS: "\"">
     | <WHILE: "while">
+    | <OUT: "out">
     | <DOSPUNTOS: ":">
     | <PUNTOCOMA: ";">
     | <COMA: ",">
@@ -81,7 +83,7 @@ TOKEN [IGNORE_CASE] : {
     | <CARACTER: <APOSTRO>(["a"-"z","A"-"Z"]|["0"-"9"])<APOSTRO>>
     | <FLOT: ("+"|"-")?(["0"-"9"])*"."(["0"-"9"])+("e"("+"|"-")(["0"-"9"])+)?>
     | <NUM: (["0"-"9"])+>
-    | <CAD: (["a"-"z","A"-"Z","_","-"])+>
+    | <CAD: (["a"-"z","A"-"Z","_","-"]|"%"|"$"|"&"|"|"|"\\")+>
     | <MM : ("++")>
      
 }
@@ -91,7 +93,7 @@ void inicio() : {} {
 }
 
 void producciones() : {}{
-     (delay()|principal()|si()|mientras()|declaracion()|funcion()|header()|operaciones()|asignacion())+
+     (out()|delay()|principal()|si()|mientras()|declaracion()|funcion()|header()|operaciones()|asignacion())+
 }
 
 void header() :{String instruccion="";}{
@@ -279,10 +281,16 @@ void declaracion() :{String nombre, instruccion="";String tipo;Object valor="";}
     <INT>{instruccion += "int ";}
     actual = <CAD>{nombre = actual.image;System.out.print(nombre);instruccion += nombre;}
     (
-        <IGUALDAD>{instruccion += " = ";trad.escribirEnLinea(instruccion);instruccion="";}
-        (
-            actual = <CAD>{System.out.print(", "+actual.image);instruccion += actual.image;}
-            |{System.out.print(" = ");valor = operaciones();}
+        (   <COR1>{instruccion+=" [] = {";}
+            (
+                actual = <NUM>{instruccion+=actual.image;}(<COMA>{instruccion+=",";})?
+            )+
+            <COR2>{instruccion+="}";}
+            |<IGUALDAD>{instruccion += " = ";trad.escribirEnLinea(instruccion);instruccion="";}
+            (
+                actual = <CAD>{System.out.print(", "+actual.image);instruccion += actual.image;}
+                |{System.out.print(" = ");valor = operaciones();}
+            )
         )
     )*
     {System.out.println("");}
@@ -487,4 +495,27 @@ void delay():{}{
     <PAR2>
     <PUNTOCOMA>
     {trad.escribir("_delay_ms("+actual.image+");");}
+}
+
+void out():{String tipo;}{
+    <OUT> {trad.escribirEnLinea("printf(");}
+    <PAR1>
+    <COMILLAS>{trad.escribirEnLinea("\"");}
+    (actual = <CAD> {trad.escribirEnLinea(actual.image);})+
+    <COMILLAS>{trad.escribirEnLinea("\"");}
+    (
+        <COMA>
+        actual = <CAD> {trad.escribirEnLinea(","+actual.image);}
+        (
+            <COR1>{trad.escribirEnLinea("[");}
+            (
+                actual = <NUM> {trad.escribirEnLinea(actual.image);}
+                |actual = <CAD> {trad.escribirEnLinea(actual.image);}
+            )
+            <COR2>{trad.escribirEnLinea("]");}
+        )*
+        //Pendientes corchetes
+    )*
+    <PAR2>
+    <PUNTOCOMA>{trad.escribir(");");}
 }

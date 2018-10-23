@@ -26,6 +26,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import modelos.CompiladorAVR;
+import modelos.CompiladorGCC;
 import modelos.traductor;
 
 /*
@@ -117,7 +118,7 @@ public class IDE extends javax.swing.JFrame {
         btnTraducir = new javax.swing.JButton();
         btnCompilarGCC = new javax.swing.JButton();
         btnCompilarAVR = new javax.swing.JButton();
-        jScrollPane6 = new javax.swing.JScrollPane();
+        jScrollPane7 = new javax.swing.JScrollPane();
         jepTerminalGCC = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -275,10 +276,9 @@ public class IDE extends javax.swing.JFrame {
             }
         });
 
-        jepTerminalGCC.setEditable(false);
         jepTerminalGCC.setBackground(new java.awt.Color(0, 0, 0));
-        jepTerminalGCC.setContentType("text/html"); // NOI18N
-        jScrollPane6.setViewportView(jepTerminalGCC);
+        jepTerminalGCC.setForeground(new java.awt.Color(255, 255, 255));
+        jScrollPane7.setViewportView(jepTerminalGCC);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -292,11 +292,7 @@ public class IDE extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnCompilarAVR, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 521, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(39, 39, 39)))
+            .addComponent(jScrollPane7)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -305,11 +301,8 @@ public class IDE extends javax.swing.JFrame {
                     .addComponent(btnTraducir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCompilarGCC, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCompilarAVR, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                    .addGap(0, 41, Short.MAX_VALUE)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane7))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -354,6 +347,7 @@ public class IDE extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         
+        
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void btnCompilarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarActionPerformed
@@ -386,13 +380,16 @@ public class IDE extends javax.swing.JFrame {
 
     private void btnCompilarGCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarGCCActionPerformed
         // TODO add your handling code here:
+        CompiladorGCC gcc = new CompiladorGCC();
+        jepTerminalGCC.setText(jepTerminalGCC.getText()+gcc.compilar());
+        jepTerminalGCC.setText(jepTerminalGCC.getText()+gcc.ejecutar());
         
     }//GEN-LAST:event_btnCompilarGCCActionPerformed
 
     private void btnCompilarAVRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompilarAVRActionPerformed
         // TODO add your handling code here:
         CompiladorAVR avr = new CompiladorAVR();
-        jepTerminalGCC.setText(avr.compilar());
+        jepTerminalGCC.setText(jepTerminalGCC.getText()+avr.compilar());
         
     }//GEN-LAST:event_btnCompilarAVRActionPerformed
 
@@ -437,7 +434,7 @@ public class IDE extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JEditorPane jepTerminalGCC;
     private javax.swing.JEditorPane jepTerminalJavaCC;
     private javax.swing.JLabel jlSalida;

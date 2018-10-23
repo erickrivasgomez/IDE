@@ -26,10 +26,10 @@ public class CompiladorAVR {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
             String s;
             while ((s = stdInput.readLine()) != null) {
-                resultado += ("<span style='color: white; font-family:verdana;font-size:110%;'>" + s + "<br></span>");
+                resultado += s + "\n";
             }
             while ((s = stdError.readLine()) != null) {
-                resultado += ("<span style='color: red; font-family:verdana;font-size:100%;'>" + s + "<br></span>");
+                resultado += s + "\n";
             }
         } catch (IOException e) {
             e.printStackTrace();

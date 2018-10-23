@@ -89,33 +89,37 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int COR2 = 45;
   /** RegularExpression Id. */
-  int WHILE = 46;
+  int COMILLAS = 46;
   /** RegularExpression Id. */
-  int DOSPUNTOS = 47;
+  int WHILE = 47;
   /** RegularExpression Id. */
-  int PUNTOCOMA = 48;
+  int OUT = 48;
   /** RegularExpression Id. */
-  int COMA = 49;
+  int DOSPUNTOS = 49;
   /** RegularExpression Id. */
-  int DDR = 50;
+  int PUNTOCOMA = 50;
   /** RegularExpression Id. */
-  int VALORBINARIO = 51;
+  int COMA = 51;
   /** RegularExpression Id. */
-  int PORT = 52;
+  int DDR = 52;
   /** RegularExpression Id. */
-  int PIN = 53;
+  int VALORBINARIO = 53;
   /** RegularExpression Id. */
-  int PB = 54;
+  int PORT = 54;
   /** RegularExpression Id. */
-  int CARACTER = 55;
+  int PIN = 55;
   /** RegularExpression Id. */
-  int FLOT = 56;
+  int PB = 56;
   /** RegularExpression Id. */
-  int NUM = 57;
+  int CARACTER = 57;
   /** RegularExpression Id. */
-  int CAD = 58;
+  int FLOT = 58;
   /** RegularExpression Id. */
-  int MM = 59;
+  int NUM = 59;
+  /** RegularExpression Id. */
+  int CAD = 60;
+  /** RegularExpression Id. */
+  int MM = 61;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -168,7 +172,9 @@ public interface ParserConstants {
     "\"}\"",
     "\"[\"",
     "\"]\"",
+    "\"\\\"\"",
     "\"while\"",
+    "\"out\"",
     "\":\"",
     "\";\"",
     "\",\"",
